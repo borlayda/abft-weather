@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from copy import copy
+from copy import copy, deepcopy
 
 def iterate_matrix(matrix, r_checksum, c_checksum):
     '''
@@ -23,7 +23,8 @@ def iterate_matrix(matrix, r_checksum, c_checksum):
     for vector in zip(*matrix):
         if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
             wrong_column = zip(*matrix).index(vector)
-    matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
+    if (wrong_row > 0 and wrong_column > 0):
+        matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
     return matrix
 
 def check_checksum(vector, checksum):
@@ -52,14 +53,6 @@ def count_checksum(vector):
     for value in vector:
         checksum += float(value)
     return checksum
-
-def get_matrix():
-    data = get("rasberrypy.com")
-    try:
-        matrices = data.json()["matrices"]
-        checksums = data.json()["checksums"]
-    except:
-        matrices = data.json()
 
 def add_matrices(matrix1, matrix2):
     '''
@@ -92,7 +85,7 @@ def make_summ(matrix_array):
     @type matrix_array : array of 2 dimensional
         arrays 
     '''
-    summ_matrix = matrix_array[0]
+    summ_matrix = deepcopy(matrix_array[0])
     row_checksum = [0 for vector in summ_matrix]
     column_checksum = [0 for vector in zip(*summ_matrix)]
     for matrix in matrix_array[1:]:
@@ -101,7 +94,7 @@ def make_summ(matrix_array):
             row_checksum[summ_matrix.index(vector)] = count_checksum(vector)
         for vector in zip(*summ_matrix):
             column_checksum[zip(*summ_matrix).index(vector)] = count_checksum(vector)
-    return summ_matrix
+    return summ_matrix, column_checksum, row_checksum
     
 def print_matrix(matrix):
     '''
@@ -110,15 +103,17 @@ def print_matrix(matrix):
     @type matrix : 2 dimensional array
     '''
     content = ""
-    head = "   "
+    head = "    \t"
     for i in range (0, len(matrix[0])):
         head += " {0}  \t".format(i+1)
     head += "\n   "
+    head += "    \t"
     for i in range (0, len(matrix[0])):
-        head += "-----"
+        head += "--- \t"
+    head += "\n"
     body = ""
     for vector in matrix:
-        body += "{0} |".format(matrix.index(vector))
+        body += " {0} |\t".format(matrix.index(vector)+1)
         for value in vector:
             body += " {0} |\t".format(value)
         body += "\n"
@@ -138,4 +133,8 @@ if __name__ == "__main__":
      [[4, 5], [6, 7], [8, 9]],
      [[1, 2], [3, 4], [5, 6]]
     ]
-    make_summ(matrices)
+    matrix, csum, rsum = make_summ(matrices)
+    print_matrix(matrix)
+    iterate_matrix(matrix, rsum, csum)
+    print "\n"
+    print_matrix(matrix)
