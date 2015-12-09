@@ -2,19 +2,44 @@
 
 from copy import copy
 
-def iterate_matrix(matrix, checksum):
+def iterate_matrix(matrix, r_checksum, c_checksum):
     '''
     Check if values are correct in a matrix
     defined by checksums.
     @param matrix : Fault tolerant matrix
     @type matrix : 2 dimensional array
-    @param checksum : Computation summerize
-        data about matrix values
-    @type checksum : vector
+    @param r_checksum : Computation summerize
+        data about matrix values (rows)
+    @type r_checksum : vector
+    @param c_checksum : Computation summerize
+        data about matrix values (columns)
+    @type c_checksum : vector
     '''
+    wrong_row = -1
+    wrong_column = -1
     for vector in matrix:
-        check_checksum(vector, checksum)
+        if not (check_checksum(vector, r_checksum[matrix.index(vector)])):
+            wrong_row = matrix.index(vector)
+    for vector in zip(*matrix):
+        if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
+            wrong_column = zip(*matrix).index(vector)
+    matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
     return matrix
+
+def check_checksum(vector, checksum):
+    '''
+    Checks if there is any problem with the matrix
+    and if it found any then it can correct one.
+    @param vector : A line of a matrix (row or column)
+    @type vector : array
+    @param checksum : Counted value of the sum of
+        all values in vector
+    @type checksum : float
+    '''
+    counted_sum = 0.0
+    for value in vector:
+        counted_sum += float(value)
+    return counted_sum == checksum
 
 def count_checksum(vector):
     '''
@@ -76,8 +101,30 @@ def make_summ(matrix_array):
             row_checksum[summ_matrix.index(vector)] = count_checksum(vector)
         for vector in zip(*summ_matrix):
             column_checksum[zip(*summ_matrix).index(vector)] = count_checksum(vector)
-        print summ_matrix, row_checksum, column_checksum
-        
+    return summ_matrix
+    
+def print_matrix(matrix):
+    '''
+    Better format to write out matrix
+    @param matrix : matrix source
+    @type matrix : 2 dimensional array
+    '''
+    content = ""
+    head = "   "
+    for i in range (0, len(matrix[0])):
+        head += " {0}  \t".format(i+1)
+    head += "\n   "
+    for i in range (0, len(matrix[0])):
+        head += "-----"
+    body = ""
+    for vector in matrix:
+        body += "{0} |".format(matrix.index(vector))
+        for value in vector:
+            body += " {0} |\t".format(value)
+        body += "\n"
+    content = head + body
+    print content
+    
 if __name__ == "__main__":
     '''
     Example application for running
