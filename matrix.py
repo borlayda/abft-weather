@@ -20,12 +20,36 @@ def iterate_matrix(matrix, r_checksum, c_checksum):
     for vector in matrix:
         if not (check_checksum(vector, r_checksum[matrix.index(vector)])):
             wrong_row = matrix.index(vector)
+            for vector in zip(*matrix):
+                if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
+                    wrong_column = zip(*matrix).index(vector)
+            if (wrong_row > 0 and wrong_column > 0):
+                matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
+    wrong_row = -1
+    wrong_column = -1
     for vector in zip(*matrix):
         if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
             wrong_column = zip(*matrix).index(vector)
-    if (wrong_row > 0 and wrong_column > 0):
-        matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
+            for vector in matrix:
+                if not (check_checksum(vector, r_checksum[matrix.index(vector)])):
+                    wrong_row = matrix.index(vector)
+            if (wrong_row > 0 and wrong_column > 0):
+                matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
     return matrix
+
+def div_matrix(matrix, division):
+    '''
+    Divide all matrix value by a given value.
+    @param matrix : summerization matrix
+    @type matrix : 2 dimensional array
+    @param division : division value
+    @type division : int
+    '''
+    result_matrix = deepcopy(matrix)
+    for vector in result_matrix:
+        for value in vector:
+            result_matrix[result_matrix.index(vector)][vector.index(value)] = round(value / division, 3)
+    return result_matrix
 
 def check_checksum(vector, checksum):
     '''
