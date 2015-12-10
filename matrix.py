@@ -23,18 +23,8 @@ def iterate_matrix(matrix, r_checksum, c_checksum):
             for vector in zip(*matrix):
                 if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
                     wrong_column = zip(*matrix).index(vector)
-            if (wrong_row > 0 and wrong_column > 0):
-                matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
-    wrong_row = -1
-    wrong_column = -1
-    for vector in zip(*matrix):
-        if not (check_checksum(vector, c_checksum[zip(*matrix).index(vector)])):
-            wrong_column = zip(*matrix).index(vector)
-            for vector in matrix:
-                if not (check_checksum(vector, r_checksum[matrix.index(vector)])):
-                    wrong_row = matrix.index(vector)
-            if (wrong_row > 0 and wrong_column > 0):
-                matrix[wrong_row][wrong_column] = abs(r_checksum[wrong_row]-c_checksum[wrong_column])
+            if (wrong_row >= 0 and wrong_column >= 0):
+                matrix[wrong_row][wrong_column] += r_checksum[wrong_row] - count_checksum(matrix[wrong_row])
     return matrix
 
 def div_matrix(matrix, division):
