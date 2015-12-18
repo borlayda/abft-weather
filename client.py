@@ -16,8 +16,11 @@ def get_weekly_data():
         print_matrix(sums)
         sums = div_matrix(sums, 7)
         print_matrix(sums)
+        return sums
     except Exception as e:
         print "Cannot connect to host: {0}, {1}".format(
+            HOST_URL, e)
+        return "Cannot connect to host: {0}, {1}".format(
             HOST_URL, e)
 
 if __name__ == '__main__':

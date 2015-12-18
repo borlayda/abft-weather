@@ -15,7 +15,7 @@ def verify():
 @app.route("/", methods=["GET"])
 def show_average():
     average = get_weekly_data()
-    return jsonify(average)
+    return jsonify(average=average)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 8080)
