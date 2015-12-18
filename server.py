@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from matrix import *
-from flask import Flask, request
+from client import *
+from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 @app.route("/verify", methods=["POST"])
@@ -10,6 +11,11 @@ def verify():
     summerize = make_summ(matrices)
     iterate_matrix(summerize, checksums[0], checksums[1])
     return summerize
+
+@app.route("/", methods=["GET"])
+def show_average():
+    average = get_weekly_data()
+    return jsonify(average)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', 8080)
